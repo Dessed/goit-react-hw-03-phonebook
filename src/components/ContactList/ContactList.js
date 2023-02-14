@@ -17,7 +17,9 @@ export const ContactList = ({contactsData, onDelete}) => {
 
 
 ContactList.propTypes = {
-    filter: PropTypes.string.isRequired,
+    contactsData: PropTypes.shape ({
+        filter: PropTypes.string.isRequired,
+    }),
     contacts: PropTypes.shape ({
         name: PropTypes.string.isRequired,
         number: PropTypes.number.isRequired,
