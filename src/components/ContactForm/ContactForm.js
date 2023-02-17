@@ -1,17 +1,20 @@
 import { Component } from "react";
 import PropTypes from 'prop-types';
-import { InputField, Label, Name,  Input, Button  } from '../App/App.styled';
+import { nanoid } from 'nanoid';
+import { InputField, Label, Name,  Input, Button  } from './ContactForm.styled';
 
 
 export class ContactForm extends Component {
     state = {
+        id: '',
         name: '',
         number: '',
     };
 
     handleChange = e => {
         const {name, value} = e.currentTarget;
-        this.setState({[name]: value });
+        const id = nanoid(3);
+        this.setState({id: id, [name]: value });
       };
 
     handleSubmit = e => {

@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import { nanoid } from 'nanoid';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { Filter } from 'components/Filter/Filter';
 import { ContactList } from '../ContactList/ContactList';
@@ -17,15 +16,33 @@ export class App extends Component {
     filter: '',
   };
  
+  componentDidMount () {
+    const contacts = localStorage.getItem("PhoneBook");
+    const parsedSettings = JSON.parse(contacts);
+
+      if (parsedSettings) {
+        this.setState({ contacts: parsedSettings });
+      }
+  };
+
+  componentDidUpdate (prevProps, prevState) {
+    const newContacts = this.state.contacts;
+    const prevContacts = prevState.contacts;
+    
+   if (newContacts !== prevContacts) {
+    localStorage.setItem("PhoneBook", JSON.stringify(newContacts));
+   } 
+  };
+
   handleFormOnSubmit = data => {
     const { contacts} = this.state;
-    const { name, number } = data;
-    const id = nanoid(3);
+    const { name } = data;
+    
     const alertReplayNameUser = contacts.some((el) => (el.name === name));
     // const alertReplayNameUser = contacts.map(contact => contact.name).includes(name);
     
     alertReplayNameUser === true ? alert (`${name} is already in contacts.`) : 
-    this.setState({state: contacts.push({id: id, name: name, number: number})});
+      this.setState(({ contacts }) => ({contacts: [...contacts, data]}));
   };
 
   handleChange = e => {
@@ -35,9 +52,16 @@ export class App extends Component {
 
   deleteContact = contactId => {
     this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
-  };
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId)}));
+    this.removeContactStorage(contactId);
+};
+
+  removeContactStorage = contactId => {
+    return (
+      localStorage.setItem('PhoneBook',JSON.stringify(JSON.parse(localStorage.getItem('PhoneBook'))
+      .filter((item) => item.id !== contactId)))
+    );
+};
 
   render () {
     const handleFormOnSubmit = this.handleFormOnSubmit;
